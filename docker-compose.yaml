@@ -28,7 +28,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
-      - "55432:5432"
+      - "2345:5432"
     logging:
       driver: none
     networks:
@@ -44,6 +44,7 @@ services:
     ports:
       - "3034:3034"
     environment:
+      # TODO: move to local `helios-api` preprod config  
       NODE_CONFIG: '{ "database": { "host": "db", "port": 5432 }, "file_storage": { "minio": { "end_point": "storage", "port": 9000 } } }'
     networks:
       - helios-net
