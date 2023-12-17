@@ -20,7 +20,6 @@ services:
 
   db:
     image: postgres:latest
-    restart: always
     environment:
       POSTGRES_USER: helios_admin
       POSTGRES_PASSWORD: dummy
@@ -29,14 +28,12 @@ services:
       - db_data:/var/lib/postgresql/data
     ports:
       - "2345:5432"
-    logging:
-      driver: none
     networks:
       - helios-net
 
   api:
     build:
-      context: https://github.com/helios-strategia/helios-api.git
+      context: ./api
       dockerfile: Dockerfile
     depends_on:
       - db
@@ -45,12 +42,14 @@ services:
       - "3034:3034"
     environment:
       # TODO: move to local `helios-api` preprod config  
-      NODE_CONFIG: '{ "database": { "host": "db", "port": 5432 }, "file_storage": { "minio": { "end_point": "storage", "port": 9000 } } }'
+      NODE_CONFIG: '{ "database": { "host": "db", "port": 5432 }, "file_storage": { "minio": { "end_point": "storage", "port": 9000 } } }'  
     networks:
       - helios-net
 
   nginx:
-    image: ${NGINX_IMAGE}
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile
     networks:
       - helios-net
     ports:
